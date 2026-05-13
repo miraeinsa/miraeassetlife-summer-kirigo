@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>기리고 · 2026 숙박하계</title>
+
+<!-- Galmuri 한글 픽셀 폰트 -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" />
+<!-- 본문용 산세리프 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+  /* ===== 기리고 픽셀 1비트 테마 ===== */
+  :root {
+    --bg-top: #2a2a2c;
+    --bg-mid: #1a1a1c;
+    --bg-bot: #0a0a0a;
+    --fg: #ffffff;
+    --fg-dim: #9a9a9a;
+    --fg-mute: #5a5a5c;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.10);
+    --danger: #ff6b6b;
+    --ok: #80e08a;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 50%, var(--bg-bot) 100%);
+    color: var(--fg);
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 픽셀 텍스처 - 미세한 노이즈 효과 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 3px 3px;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 36px 24px 50px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== 헤드 카피 ===== */
+  .head {
+    text-align: center;
+    margin-bottom: 32px;
+    color: var(--fg);
+  }
+
+  .head .title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .head .subtitle {
+    font-size: 12px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ===== "기리고" 로고 (Galmuri 픽셀 폰트) ===== */
+  .brand-logo {
+    font-family: 'Galmuri11', monospace;
+    font-weight: 700;
+    font-size: 60px;
+    text-align: center;
+    color: var(--fg);
+    letter-spacing: 0.1em;
+    margin: 28px 0 32px;
+    text-shadow: 0 0 1px rgba(255,255,255,0.4);
+    /* 픽셀 가장자리 강조 */
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
+    image-rendering: pixelated;
+  }
+
+  /* ===== 픽셀 손 SVG 컨테이너 ===== */
+  .hands-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 36px;
+  }
+
+  .hands-svg {
+    width: 180px;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.15));
+  }
+
+  /* ===== 카드 ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(8px);
+  }
+
+  .card-title {
+    font-family: 'Galmuri11', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--fg);
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    -webkit-font-smoothing: none;
+  }
+
+  /* ===== 업로드 영역 ===== */
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: rgba(0,0,0,0.25);
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--fg);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .upload-zone.has-file {
+    padding: 10px;
+    border-style: solid;
+    border-color: var(--fg);
+  }
+
+  .upload-icon-svg {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    image-rendering: pixelated;
+  }
+
+  .upload-text {
+    color: var(--fg);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 6px;
+  }
+
+  .upload-hint {
+    color: var(--fg-mute);
+    font-size: 11px;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  #fileInput { display: none; }
+
+  .preview-wrap {
+    position: relative;
+    display: none;
+  }
+  .preview-wrap.show { display: block; }
+
+  .preview-img {
+    width: 100%;
+    border-radius: 6px;
+    display: block;
+    border: 1px solid var(--border);
+  }
+
+  /* ===== 안내문 ===== */
+  .instructions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  .instructions li {
+    counter-increment: step;
+    padding: 9px 0 9px 30px;
+    position: relative;
+    font-size: 12.5px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    border-bottom: 1px solid var(--border);
+  }
+  .instructions li:last-child { border-bottom: none; }
+
+  .instructions li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 20px;
+    height: 20px;
+    background: var(--fg);
+    color: #000;
+    font-family: 'Galmuri11', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+  }
+
+  .instructions b { color: var(--fg); font-weight: 700; }
+
+  /* ===== "소원 전송" 버튼 (픽셀 스타일) ===== */
+  .submit-btn {
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-top: 24px;
+    font-family: inherit;
+    display: block;
+  }
+
+  .submit-btn:disabled { cursor: not-allowed; opacity: 0.35; }
+
+  .submit-btn-inner {
+    background: var(--fg);
+    color: #000;
+    padding: 18px;
+    border-radius: 10px;
+    font-family: 'Galmuri11', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-align: center;
+    -webkit-font-smoothing: none;
+    transition: transform 0.1s;
+  }
+
+  .submit-btn:not(:disabled):active .submit-btn-inner {
+    transform: translateY(2px);
+  }
+
+  .submit-btn:disabled .submit-btn-inner {
+    background: var(--fg-mute);
+    color: #1a1a1a;
+  }
+
+  /* ===== 상태 메시지 ===== */
+  .status {
+    margin-top: 14px;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    text-align: center;
+    display: none;
+    line-height: 1.5;
+  }
+  .status.show { display: block; }
+
+  .status.loading {
+    background: rgba(255,255,255,0.06);
+    color: var(--fg);
+    border: 1px solid var(--border);
+  }
+  .status.success {
+    background: rgba(128,224,138,0.08);
+    color: var(--ok);
+    border: 1px solid rgba(128,224,138,0.2);
+  }
+  .status.error {
+    background: rgba(255,107,107,0.08);
+    color: var(--danger);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+
+  /* ===== 푸터 ===== */
+  .footer {
+    margin-top: auto;
+    padding-top: 28px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--fg-mute);
+    letter-spacing: 0.15em;
+    font-family: 'Galmuri11', monospace;
+    -webkit-font-smoothing: none;
+  }
+
+  .footer .meta {
+    opacity: 0.7;
+    margin-top: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: normal;
+    font-size: 10.5px;
+  }
+
+  /* ===== 완료 모달 ===== */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 24px;
+  }
+  .modal.show { display: flex; }
+
+  .modal-card {
+    background: var(--bg-mid);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 36px 28px;
+    text-align: center;
+    max-width: 340px;
+    width: 100%;
+    animation: slideUp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-hands {
+    width: 100px;
+    margin: 0 auto 16px;
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .modal h3 {
+    font-family: 'Galmuri11', monospace;
+    font-size: 22px;
+    margin: 0 0 12px;
+    color: var(--fg);
+    letter-spacing: 0.08em;
+    -webkit-font-smoothing: none;
+  }
+
+  .modal p {
+    color: var(--fg-dim);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 22px;
+  }
+
+  .modal-close {
+    background: var(--fg);
+    color: #000;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 6px;
+    font-family: 'Galmuri11', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.15em;
+    -webkit-font-smoothing: none;
+  }
+
+  /* 픽셀 깜빡임 효과 (로딩 시) */
+  @keyframes pixelPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .pulsing { animation: pixelPulse 1s steps(2) infinite; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- 상단 안내 -->
+  <header class="head">
+    <p class="title">소원을 기리고,<br/>간직하세요</p>
+    <p class="subtitle">A4 용지에 가고 싶은 숙박지와 본인 정보를 적고<br/>사진을 촬영해 소원을 전송해 주세요</p>
+  </header>
+
+  <!-- 기리고 로고 -->
+  <div class="brand-logo">기리고</div>
+
+  <!-- 픽셀 손모양 -->
+  <div class="hands-wrap">
+    <svg class="hands-svg" id="handsSvg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"></svg>
+  </div>
+
+  <!-- 안내 -->
+  <section class="card">
+    <p class="card-title">PROCESS</p>
+    <ul class="instructions">
+      <li>A4 용지에 <b>숙박지명 · 희망일자 · 부서 · 직급 · 성명</b>을 자필로 기재</li>
+      <li>해당 종이를 들고 <b>사진 촬영</b> (셀카·거울샷·동료 촬영 모두 가능)</li>
+      <li>아래에서 사진 업로드 후 <b>소원 전송</b> 버튼 클릭</li>
+    </ul>
+  </section>
+
+  <!-- 업로드 -->
+  <section class="card">
+    <p class="card-title">PHOTO</p>
+    <label for="fileInput" class="upload-zone" id="uploadZone">
+      <div class="upload-content" id="uploadContent">
+        <svg class="upload-icon-svg" viewBox="0 0 16 16" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+          <!-- 픽셀 카메라 아이콘 -->
+          <rect x="1" y="4" width="14" height="10" fill="#fff"/>
+          <rect x="2" y="5" width="12" height="8" fill="#000"/>
+          <rect x="6" y="3" width="4" height="1" fill="#fff"/>
+          <rect x="6" y="7" width="4" height="4" fill="#fff"/>
+          <rect x="7" y="8" width="2" height="2" fill="#000"/>
+          <rect x="12" y="6" width="1" height="1" fill="#fff"/>
+        </svg>
+        <p class="upload-text">사진을 선택하거나 끌어다 놓으세요</p>
+        <p class="upload-hint">JPG · PNG · HEIC · 최대 10MB</p>
+      </div>
+      <div class="preview-wrap" id="previewWrap">
+        <img class="preview-img" id="previewImg" alt="preview"/>
+      </div>
+    </label>
+    <input type="file" id="fileInput" accept="image/*" capture="environment" />
+  </section>
+
+  <!-- 전송 -->
+  <button class="submit-btn" id="submitBtn" disabled>
+    <div class="submit-btn-inner">소원 전송</div>
+  </button>
+
+  <div class="status" id="status"></div>
+
+  <footer class="footer">
+    <div>HR INNOVATION · 2026</div>
+    <div class="meta">건강한 조직문화 구축을 위한 임직원 숙박하계</div>
+  </footer>
+</div>
+
+<!-- 완료 모달 -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <svg class="modal-hands" id="modalHands" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"></svg>
+    <h3>소원 전송 완료</h3>
+    <p>주관 부서에서 일정·숙박지별로<br/>오프라인 게임 일정을 안내드릴 예정입니다.<br/>건강한 여름 되세요.</p>
+    <button class="modal-close" id="modalClose">닫기</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // ⚙️ 설정: 배포 후 Apps Script Web App URL을 여기에 입력하세요.
+  // ============================================================
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFTRsxU-j4eDRrmwNGanPTRmsZce3uOVOaVKd7LrGQJCX8xoOXvkm6f7liLXnXrHfBRQ/exec";
+  const MAX_SIZE = 10 * 1024 * 1024;
+
+  // ============================================================
+  // 🙏 픽셀 손모양 - 20 x 24 그리드 (1=흰픽셀)
+  // ============================================================
+  const handsGrid = [
+    "..........##..........",
+    ".........####.........",
+    "........######........",
+    ".......##.##.##.......",
+    "......##..##..##......",
+    "......##..##..##......",
+    ".....##...##...##.....",
+    ".....##...##...##.....",
+    "....##....##....##....",
+    "....##....##....##....",
+    "...##.....##.....##...",
+    "...##.....##.....##...",
+    "..##......##......##..",
+    "..##......##......##..",
+    "..##......##......##..",
+    "...##....####....##...",
+    "....##..######..##....",
+    ".....################.",
+    ".....################.",
+    "....##################",
+    "....##################",
+    ".....################.",
+    "......##############..",
+    ".......############..."
+  ];
+
+  function renderPixelHands(svgEl, pixelSize) {
+    const ns = 'http://www.w3.org/2000/svg';
+    handsGrid.forEach((row, y) => {
+      [...row].forEach((ch, x) => {
+        if (ch === '#') {
+          const r = document.createElementNS(ns, 'rect');
+          r.setAttribute('x', x * pixelSize);
+          r.setAttribute('y', y * pixelSize);
+          r.setAttribute('width', pixelSize);
+          r.setAttribute('height', pixelSize);
+          r.setAttribute('fill', '#ffffff');
+          svgEl.appendChild(r);
+        }
+      });
+    });
+  }
+
+  // 메인 화면 (180px → 8px per pixel)
+  renderPixelHands(document.getElementById('handsSvg'), 8);
+  // 모달 (100px → 5px per pixel)
+  renderPixelHands(document.getElementById('modalHands'), 5);
+
+  // ============================================================
+  // 📤 업로드 / 전송 로직
+  // ============================================================
+  const fileInput = document.getElementById('fileInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const uploadContent = document.getElementById('uploadContent');
+  const previewWrap = document.getElementById('previewWrap');
+  const previewImg = document.getElementById('previewImg');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitInner = submitBtn.querySelector('.submit-btn-inner');
+  const statusEl = document.getElementById('status');
+  const modal = document.getElementById('modal');
+  const modalClose = document.getElementById('modalClose');
+
+  let currentFile = null;
+
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (f) handleFile(f);
+  });
+
+  ['dragenter', 'dragover'].forEach(ev => {
+    uploadZone.addEventListener(ev, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      uploadZone.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach(ev => {
+    uploadZone.addEventListener(ev, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      uploadZone.classList.remove('dragover');
+    });
+  });
+  uploadZone.addEventListener('drop', (e) => {
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) {
+      showStatus('이미지 파일만 업로드할 수 있어요.', 'error');
+      return;
+    }
+    if (file.size > MAX_SIZE) {
+      showStatus('파일 크기가 10MB를 초과합니다.', 'error');
+      return;
+    }
+    currentFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImg.src = e.target.result;
+      uploadContent.style.display = 'none';
+      previewWrap.classList.add('show');
+      uploadZone.classList.add('has-file');
+      submitBtn.disabled = false;
+      hideStatus();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  submitBtn.addEventListener('click', async () => {
+    if (!currentFile) return;
+
+    if (APPS_SCRIPT_URL.includes('PASTE_YOUR')) {
+      showStatus('관리자 설정이 완료되지 않았습니다.\n주관 부서에 문의해 주세요.', 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitInner.textContent = '소원 전송 중...';
+    submitInner.classList.add('pulsing');
+    showStatus('소원을 전송하고 있어요...', 'loading');
+
+    try {
+      const base64 = await fileToBase64(currentFile);
+      const payload = {
+        filename: currentFile.name,
+        mimeType: currentFile.type,
+        size: currentFile.size,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent.substring(0, 200),
+        base64: base64,
+      };
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        hideStatus();
+        modal.classList.add('show');
+        resetForm();
+      } else {
+        throw new Error(result.message || '알 수 없는 오류');
+      }
+    } catch (err) {
+      console.error(err);
+      showStatus('전송에 실패했어요. 잠시 후 다시 시도해 주세요.\n(' + err.message + ')', 'error');
+      submitInner.textContent = '소원 전송';
+      submitInner.classList.remove('pulsing');
+      submitBtn.disabled = false;
+    }
+  });
+
+  modalClose.addEventListener('click', () => {
+    modal.classList.remove('show');
+    submitInner.textContent = '소원 전송';
+    submitInner.classList.remove('pulsing');
+  });
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showStatus(msg, type) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status show ' + type;
+  }
+  function hideStatus() {
+    statusEl.className = 'status';
+  }
+  function resetForm() {
+    currentFile = null;
+    fileInput.value = '';
+    previewImg.src = '';
+    uploadContent.style.display = '';
+    previewWrap.classList.remove('show');
+    uploadZone.classList.remove('has-file');
+    submitBtn.disabled = true;
+    submitInner.textContent = '소원 전송';
+    submitInner.classList.remove('pulsing');
+  }
+</script>
+</body>
+</html>
