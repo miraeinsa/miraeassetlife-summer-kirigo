@@ -147,24 +147,40 @@
 
   /* ===== 업로드 영역 ===== */
   .upload-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: 10px;
+    position: relative;
+    display: block;
+    border-radius: 12px;
     padding: 36px 20px;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: background 0.2s;
     background: rgba(0,0,0,0.25);
+    border: none;
+  }
+
+  .upload-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px dashed rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    pointer-events: none;
+    transition: border-color 0.2s;
   }
 
   .upload-zone:hover, .upload-zone.dragover {
-    border-color: var(--fg);
     background: rgba(255,255,255,0.04);
+  }
+  .upload-zone:hover::before,
+  .upload-zone.dragover::before {
+    border-color: var(--fg);
   }
 
   .upload-zone.has-file {
     padding: 10px;
-    border-style: solid;
-    border-color: var(--fg);
+  }
+  .upload-zone.has-file::before {
+    border: 2px solid var(--fg);
   }
 
   .upload-icon-svg {
