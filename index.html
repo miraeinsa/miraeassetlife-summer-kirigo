@@ -421,6 +421,10 @@
 </head>
 
 <body>
+
+<!-- 배경음악 -->
+<audio id="bgm" src="kirigo.mp3" loop preload="auto" autoplay></audio>
+
 <div class="container">
 
   <!-- 상단 안내 -->
@@ -641,6 +645,24 @@
     submitInner.textContent = '소원 전송';
     submitInner.classList.remove('pulsing');
   }
+
+  // ============================================================
+  // 🎵 배경음악 (BGM) - 자동재생 시도 + 첫 인터랙션 시 보조 재생
+  // ============================================================
+  const bgm = document.getElementById('bgm');
+  bgm.volume = 0.4;
+  bgm.play().catch(() => {});
+  const autoPlayOnInteract = () => {
+    if (bgm.paused) bgm.play().catch(() => {});
+    document.removeEventListener('click', autoPlayOnInteract);
+    document.removeEventListener('touchstart', autoPlayOnInteract);
+    document.removeEventListener('scroll', autoPlayOnInteract);
+    document.removeEventListener('keydown', autoPlayOnInteract);
+  };
+  document.addEventListener('click', autoPlayOnInteract, { once: true });
+  document.addEventListener('touchstart', autoPlayOnInteract, { once: true });
+  document.addEventListener('scroll', autoPlayOnInteract, { once: true });
+  document.addEventListener('keydown', autoPlayOnInteract, { once: true });
 </script>
 </body>
 </html>
